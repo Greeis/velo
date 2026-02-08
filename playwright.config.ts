@@ -12,7 +12,11 @@ import { defineConfig, devices } from '@playwright/test';
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  // timeout: 5000, //timeout padrao - 5 segundos
+  timeout: 60_000, //60 segundos - Tempo maximo para cada teste completo (30 segundos é o padrão)
+  expect: {
+    timeout: 5_000, //5 segundos - Tempo maximo de espera para cada expectativa, tempo maximo de para assertions (nao vale a pena usar)
+  },
+
   testDir: './playwright/e2e',
   /* Run tests in files in parallel */
   fullyParallel: true,
@@ -31,6 +35,22 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
+
+    // Tempo maximo de espera para cada ação (clicks, preenchimentos, etc)
+    // Quando o valor é 0, o playwright usa o timeout padrão
+    actionTimeout: 5_000, //5 segundos
+
+    // Tempo maximo de espera para cada navegação (goto, waitForURL etc)
+    // Quando o valor é 0, o playwright usa o timeout padrão
+    navigationTimeout: 10_000, //10 segundos 
+
+    // Outros
+    // waitForTimeout: 10000, //10 segundos - Tempo maximo de espera para cada espera (waitForTimeout, etc)
+    // waitForSelectorTimeout: 10000, //10 segundos - Tempo maximo de espera para cada seleção (waitForSelector, etc)
+    // waitForFunctionTimeout: 10000, //10 segundos - Tempo maximo de espera para cada função (waitForFunction, etc)
+    // waitForLoadStateTimeout: 10000, //10 segundos - Tempo maximo de espera para cada estado de carga (waitForLoadState, etc)
+    // waitForNetworkIdleTimeout: 10000, //10 segundos - Tempo maximo de espera para cada estado de idle (waitForNetworkIdle, etc)
+    // waitForNetworkQuietTimeout: 10000, //10 segundos - Tempo maximo de espera para cada estado de quiet (waitForNetworkQuiet, etc)
   },
 
   /* Configure projects for major browsers */
