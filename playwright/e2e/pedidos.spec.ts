@@ -1,25 +1,13 @@
-import { test } from '@playwright/test'
-
+import { test } from '../support/fixtures'
 import { generateCode } from '../support/helpers'
-
-import { Navbar } from '../support/components/Navbar'
-
-import { LandingPage } from '../support/pages/LandingPage'
-import { OrderLockupPage, OrderDetails } from '../support/pages/OrderLockupPage'
+import type { OrderDetails } from '../support/actions/orderLockupActions'
 
 test.describe('Consulta de Pedido', () => {
-
-  let orderLockupPage: OrderLockupPage
-
-  test.beforeEach(async ({ page }) => {
-    await new LandingPage(page).goto()
-    await new Navbar(page).orderLockupLink()
-
-    orderLockupPage = new OrderLockupPage(page)
-    orderLockupPage.validatePageLoaded()
+  test.beforeEach(async ({ app }) => {
+    await app.orderLockup.open()
   })
 
-  test('deve consultar um pedido aprovado', async ({ page }) => {
+  test('deve consultar um pedido aprovado', async ({ app }) => {
     const order: OrderDetails = {
       number: 'VLO-YAF0XN',
       status: 'APROVADO' as const,
@@ -27,18 +15,17 @@ test.describe('Consulta de Pedido', () => {
       wheels: 'sport Wheels',
       customer: {
         name: 'Graziele Almeida',
-        email: 'g@dev.com'
+        email: 'g@dev.com',
       },
-      payment: 'À Vista'
+      payment: 'À Vista',
     }
 
-    await orderLockupPage.searchOrder(order.number)
-
-    await orderLockupPage.validateOrderDetails(order)
-    await orderLockupPage.validateStatusBadge(order.status)
+    await app.orderLockup.searchOrder(order.number)
+    await app.orderLockup.validateOrderDetails(order)
+    await app.orderLockup.validateStatusBadge(order.status)
   })
 
-  test('deve consultar um pedido reprovado', async ({ page }) => {
+  test('deve consultar um pedido reprovado', async ({ app }) => {
     const order: OrderDetails = {
       number: 'VLO-K8HW91',
       status: 'EM_ANALISE' as const,
@@ -46,18 +33,17 @@ test.describe('Consulta de Pedido', () => {
       wheels: 'aero Wheels',
       customer: {
         name: 'Graziele Almeida',
-        email: 'teste@galmeida.com'
+        email: 'teste@galmeida.com',
       },
-      payment: 'À Vista'
+      payment: 'À Vista',
     }
 
-    await orderLockupPage.searchOrder(order.number)
-
-    await orderLockupPage.validateOrderDetails(order)
-    await orderLockupPage.validateStatusBadge(order.status)
+    await app.orderLockup.searchOrder(order.number)
+    await app.orderLockup.validateOrderDetails(order)
+    await app.orderLockup.validateStatusBadge(order.status)
   })
 
-  test('deve consultar um pedido em analise', async ({ page }) => {
+  test('deve consultar um pedido em analise', async ({ app }) => {
     const order: OrderDetails = {
       number: 'VLO-K8HW91',
       status: 'EM_ANALISE' as const,
@@ -65,28 +51,27 @@ test.describe('Consulta de Pedido', () => {
       wheels: 'aero Wheels',
       customer: {
         name: 'Graziele Almeida',
-        email: 'teste@galmeida.com'
+        email: 'teste@galmeida.com',
       },
-      payment: 'À Vista'
+      payment: 'À Vista',
     }
 
-    await orderLockupPage.searchOrder(order.number)
-
-    await orderLockupPage.validateOrderDetails(order)
-    await orderLockupPage.validateStatusBadge(order.status)
+    await app.orderLockup.searchOrder(order.number)
+    await app.orderLockup.validateOrderDetails(order)
+    await app.orderLockup.validateStatusBadge(order.status)
   })
 
-  test('deve exibir mensagem quando o pedido não é encontrado', async ({ page }) => {
+  test('deve exibir mensagem quando o pedido não é encontrado', async ({ app }) => {
     const order = generateCode()
 
-    await orderLockupPage.searchOrder(order)
-    await orderLockupPage.validateOrderNotFound()
+    await app.orderLockup.searchOrder(order)
+    await app.orderLockup.validateOrderNotFound()
   })
 
-  test('deve exibir mensagem quando o código do pedido está fora do padrão', async ({ page }) => {
+  test('deve exibir mensagem quando o código do pedido está fora do padrão', async ({ app }) => {
     const orderCode = 'XYZ-999-INVALIDO'
 
-    await orderLockupPage.searchOrder(orderCode)
-    await orderLockupPage.validateOrderNotFound()
+    await app.orderLockup.searchOrder(orderCode)
+    await app.orderLockup.validateOrderNotFound()
   })
 })
